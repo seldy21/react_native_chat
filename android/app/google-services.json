@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "876497380135",
+    "project_id": "chatapp-1cb5a",
+    "storage_bucket": "chatapp-1cb5a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:876497380135:android:665f3d6cd74c1dc096ff02",
+        "android_client_info": {
+          "package_name": "com.dasom.chatapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBaB6v_CaziGiOGkpaZUXS7qILD3aSJemc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

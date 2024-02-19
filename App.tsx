@@ -15,15 +15,22 @@ import React, { useContext, useCallback } from 'react';
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 const Screens = () => {
-  const { user, processingSignin, processingSignup, initialized } = useContext(AuthContext);
+  const { user, processingSignin, processingSignup, initialized } =
+    useContext(AuthContext);
 
   const renderRootStack = useCallback(() => {
+    console.log(initialized, "???D")
     if (!initialized) {
-      return (<Stack.Screen name="Loading" component={LoadingScreen}/>)
+      return <Stack.Screen name="Loading" component={LoadingScreen}/>;
     }
     if (user !== null && !processingSignin && !processingSignup) {
       //login
-      return <Stack.Screen name="Home" component={HomeScreen} />;
+      return (
+        <>
+          <Stack.Screen name="Home" component={HomeScreen} />
+          <Stack.Screen name="Chat" component={ChatScreen} />
+        </>
+      );
     }
     //logout
     return (
@@ -37,20 +44,11 @@ const Screens = () => {
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         {renderRootStack()}
-        {/* <Stack.Screen name="Signup" component={SignupScreen} />
-        <Stack.Screen name="Signin" component={SigninScreen} /> */}
       </Stack.Navigator>
     </NavigationContainer>
   );
 };
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
 import { RootStackParamList } from './src/types';
 import SignupScreen from './src/SignupScreen/SignupScreen';
 import AuthProvider from './src/component/AuthProvider';
@@ -58,6 +56,7 @@ import SigninScreen from './src/SigninScreen/SigninScreen';
 import AuthContext from './src/component/AuthContext';
 import HomeScreen from './src/HomeScreen/HomeScreen';
 import LoadingScreen from './src/LoadingScreen/LoadingScreen';
+import ChatScreen from './src/ChatScreen/ChatScreen';
 
 const App = () => {
   return (

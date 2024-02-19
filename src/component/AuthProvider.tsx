@@ -16,7 +16,8 @@ export default function AuthProvider({
 
   useEffect(() => {
     const unsubscribe = auth().onUserChanged(async fbUser => {
-      console.log(fbUser)
+      console.log(fbUser, '로그인한 유저');
+
       if (fbUser !== null) {
         setUser({
           userId: fbUser.uid,
@@ -57,12 +58,12 @@ export default function AuthProvider({
   );
 
   //로그인
-  const signin = useCallback(async(email: string, password: string) => {
+  const signin = useCallback(async (email: string, password: string) => {
     setProccessingSignin(true);
     try {
       await auth().signInWithEmailAndPassword(email, password);
-    } finally{
-      setProccessingSignin(false)
+    } finally {
+      setProccessingSignin(false);
     }
   }, []);
   const value = useMemo(() => {

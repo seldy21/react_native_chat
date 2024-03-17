@@ -19,7 +19,6 @@ const Screens = () => {
     useContext(AuthContext);
 
   const renderRootStack = useCallback(() => {
-    console.log(initialized, "???D")
     if (!initialized) {
       return <Stack.Screen name="Loading" component={LoadingScreen}/>;
     }
@@ -39,7 +38,7 @@ const Screens = () => {
         <Stack.Screen name="Signin" component={SigninScreen} />
       </>
     );
-  }, [user, processingSignin, processingSignup]);
+  }, [user, initialized, processingSignin, processingSignup]);
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>

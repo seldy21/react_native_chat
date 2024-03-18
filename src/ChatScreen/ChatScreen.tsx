@@ -28,7 +28,6 @@ export default function ChatScreen() {
   const { user: me } = useContext(AuthContext);
   const loading = loadingChat || loadingMessages;
 
-  console.log('message', messages);
 
   const onChangeText = useCallback((newText: string) => {
     setText(newText);

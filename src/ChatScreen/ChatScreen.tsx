@@ -11,26 +11,35 @@ import Screen from '../component/Screen';
 import { RouteProp, useRoute } from '@react-navigation/native';
 import { RootStackParamList } from '../types';
 import { useChat } from './useChat';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useContext, useMemo, useState } from 'react';
 import { Colors } from '../modules/Colors';
-import Icon from 'react-native-vector-icons/MaterialIcons'
+import Icon from 'react-native-vector-icons/MaterialIcons';
+import AuthContext from '../component/AuthContext';
 
 export default function ChatScreen() {
   const { params } = useRoute<RouteProp<RootStackParamList, 'Chat'>>();
   const { other, userIds } = params;
-  const { loadingChat, chat } = useChat(userIds);
+  const { loadingChat, chat, sendMessage, sending, messages, loadingMessages } =
+    useChat(userIds);
   const [text, setText] = useState<string>('');
   const sendDisabled = useMemo(() => {
     return text.length === 0;
   }, [text]);
+  const { user: me } = useContext(AuthContext);
+  const loading = loadingChat || loadingMessages;
+
+  console.log('message', messages);
 
   const onChangeText = useCallback((newText: string) => {
     setText(newText);
   }, []);
 
-  const onPressSendButton = useCallback(()=>{
+  const onPressSendButton = useCallback(() => {
+    if (me != null) {
+      sendMessage(text, me);
+    }
     setText('');
-  },[])
+  }, [me, sendMessage, text]);
 
   const renderChat = useCallback(() => {
     if (chat === null) return;
@@ -48,7 +57,17 @@ export default function ChatScreen() {
             horizontal
           />
         </View>
-        <View style={styles.messageList}></View>
+        <FlatList
+          style={styles.messageList}
+          data={messages}
+          renderItem={({ item: message }) => (
+            <View>
+              <Text>{message.user.name}</Text>
+              <Text>{message.text}</Text>
+              <Text>{message.createdAt.toISOString()}</Text>
+            </View>
+          )}
+        />
         <View style={styles.inputContainer}>
           <View style={styles.textInputContainer}>
             <TextInput
@@ -58,18 +77,21 @@ export default function ChatScreen() {
               multiline
             />
           </View>
-          <TouchableOpacity style={sendDisabled ? disabledSendButtonStyle : styles.sendButton} disabled={sendDisabled} onPress={onPressSendButton}>
-            <Icon name='send' style={styles.sendIcon}/>
+          <TouchableOpacity
+            style={sendDisabled ? disabledSendButtonStyle : styles.sendButton}
+            disabled={sendDisabled}
+            onPress={onPressSendButton}>
+            <Icon name="send" style={styles.sendIcon} />
           </TouchableOpacity>
         </View>
       </View>
     );
-  }, [chat, onChangeText, text, sendDisabled]);
+  }, [chat, onChangeText, text, sendDisabled, messages]);
 
   return (
     <Screen title={other.name}>
       <View style={styles.container}>
-        {loadingChat ? (
+        {loading ? (
           <View style={styles.loadingContainer}>
             <ActivityIndicator />
           </View>
@@ -145,10 +167,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  sendIcon:{
+  sendIcon: {
     color: Colors.white,
-    fontSize: 16
-  }
+    fontSize: 16,
+  },
 });
 
 const disabledSendButtonStyle = [

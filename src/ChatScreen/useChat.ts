@@ -68,10 +68,10 @@ export const useChat = (userIds: string[]) => {
 
       const doc = await firestore().collection(Collections.CHATS).doc(chat.id).collection(Collections.MESSAGES).add(data);
 
-      setMessages((preMessages) => preMessages.concat([{
+      setMessages((preMessages) => [{
         id: doc.id,
         ...data
-      }]))
+      }].concat(preMessages))
     } finally {
       setSending(false)
     }
@@ -80,7 +80,7 @@ export const useChat = (userIds: string[]) => {
   const loadMessages = useCallback(async (chatId: string) => {
     try {
       setLoadingMessages(true);
-      const messagesSnapshot = await firestore().collection(Collections.CHATS).doc(chatId).collection(Collections.MESSAGES).orderBy('createdAt', 'asc').get();
+      const messagesSnapshot = await firestore().collection(Collections.CHATS).doc(chatId).collection(Collections.MESSAGES).orderBy('createdAt', 'desc').get();
 
       const ms = messagesSnapshot.docs.map<Message>(doc => {
         const data = doc.data();

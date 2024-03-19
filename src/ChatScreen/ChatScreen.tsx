@@ -1,6 +1,7 @@
 import {
   ActivityIndicator,
   FlatList,
+  ScrollView,
   StyleSheet,
   Text,
   TextInput,
@@ -15,6 +16,7 @@ import { useCallback, useContext, useMemo, useState } from 'react';
 import { Colors } from '../modules/Colors';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import AuthContext from '../component/AuthContext';
+import Message from './Message';
 
 export default function ChatScreen() {
   const { params } = useRoute<RouteProp<RootStackParamList, 'Chat'>>();
@@ -27,7 +29,6 @@ export default function ChatScreen() {
   }, [text]);
   const { user: me } = useContext(AuthContext);
   const loading = loadingChat || loadingMessages;
-
 
   const onChangeText = useCallback((newText: string) => {
     setText(newText);
@@ -57,25 +58,27 @@ export default function ChatScreen() {
           />
         </View>
         <FlatList
+          inverted
           style={styles.messageList}
           data={messages}
           renderItem={({ item: message }) => (
-            <View>
-              <Text>{message.user.name}</Text>
-              <Text>{message.text}</Text>
-              <Text>{message.createdAt.toISOString()}</Text>
-            </View>
+            <Message
+              createdAt={message.createdAt}
+              isOtherMessage={message.user.userId !== me?.userId}
+              name={message.user.name}
+              text={message.text}
+            />
           )}
         />
         <View style={styles.inputContainer}>
-          <View style={styles.textInputContainer}>
+          <ScrollView style={styles.textInputContainer}>
             <TextInput
               style={styles.textInput}
               value={text}
               onChangeText={onChangeText}
               multiline
             />
-          </View>
+          </ScrollView>
           <TouchableOpacity
             style={sendDisabled ? disabledSendButtonStyle : styles.sendButton}
             disabled={sendDisabled}
@@ -85,7 +88,7 @@ export default function ChatScreen() {
         </View>
       </View>
     );
-  }, [chat, onChangeText, text, sendDisabled, messages]);
+  }, [chat, onChangeText, text, sendDisabled, messages, me?.userId]);
 
   return (
     <Screen title={other.name}>
@@ -147,16 +150,18 @@ const styles = StyleSheet.create({
   textInputContainer: {
     flex: 1,
     marginRight: 10,
-    borderRadius: 24,
+    borderRadius: 12,
     borderColor: Colors.black,
     borderWidth: 1,
     overflow: 'hidden',
     paddingHorizontal: 10,
     minHeight: 50,
-    justifyContent: 'center',
+    maxHeight: 150,
   },
   textInput: {
     padding: 0,
+    minHeight: 50,
+    justifyContent:"center"
   },
   sendButton: {
     backgroundColor: Colors.black,
